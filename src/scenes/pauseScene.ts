@@ -28,6 +28,10 @@ export class PauseScene extends Phaser.Scene {
             this.scene.resume('GameScene');
         });
 
+        this.input.keyboard.once('keydown-ESC', () => {
+            this.scene.resume('GameScene');
+        }, this);
+
         this.input.keyboard.once('keydown-SPACE', () => {
             this.scene.resume('GameScene');
         }, this);
