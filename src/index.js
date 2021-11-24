@@ -15,7 +15,7 @@ var config = {
         mode: Phaser.Scale.FIT,
         autoCenter: Phaser.Scale.CENTER_BOTH
     },
-    backgroundColor: '#8AA8B2',
+    backgroundColor: '#5E6870',
     audio: {
         disableWebAudio: true
     },
