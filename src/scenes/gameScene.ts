@@ -1,7 +1,6 @@
 import * as Phaser from 'phaser';
 
-import * as clouds_big from './../assets/images/background/clouds_big.png'
-import * as clouds_small from './../assets/images/background/clouds_small.png'
+import * as road from './../assets/images/background/road.png'
 
 import * as asteroid_png from './../assets/images/asteroid.png'
 import * as racing_mp3 from './../assets/audio/racing.mp3'
@@ -35,8 +34,7 @@ export class GameScene extends Phaser.Scene {
     public distance_to_goal: integer = 100;
     public collected_stars: integer = 0;
 
-    private clouds_small: Phaser.GameObjects.TileSprite;
-    private clouds_big: Phaser.GameObjects.TileSprite;
+    private road: Phaser.GameObjects.TileSprite;
 
     private player_1: RaceCar;
     private player_2: RaceCar;
@@ -54,8 +52,7 @@ export class GameScene extends Phaser.Scene {
     }
 
     preload(): void {
-        this.load.image('clouds_big', clouds_big);
-        this.load.image('clouds_small', clouds_small);
+        this.load.image('road', road);
         this.load.image('star', star_png);
         this.load.image('asteroid', asteroid_png);
 
@@ -66,11 +63,8 @@ export class GameScene extends Phaser.Scene {
 
     create(): void {
 
-        this.clouds_small = this.add.tileSprite(300, 400, 600, 1600, 'clouds_small');
-        this.clouds_big = this.add.tileSprite(300, 400, 600, 1600, 'clouds_big');
-
-        this.clouds_small.alpha = 0.3;
-        this.clouds_big.alpha = 0.6;
+        this.road = this.add.tileSprite(512, 384, 1024, 768, 'road');
+        //this.clouds_big = this.add.tileSprite(300, 400, 600, 1600, 'clouds_big');
 
         this.matter.world.on('collisionstart', event => {
             for (var i = 0; i < event.pairs.length; i++) {
@@ -140,8 +134,7 @@ export class GameScene extends Phaser.Scene {
         //    this.speed_timer -= 1000;
         //}
 
-        this.clouds_small.tilePositionY -= 0.15 * delta * (this.speed / 100);
-        this.clouds_big.tilePositionY -= 0.2 * delta * (this.speed / 100);
+        this.road.tilePositionY -= 0.15 * delta * (this.speed / 100);
 
         this.player_1.update();
         this.player_2.update();
