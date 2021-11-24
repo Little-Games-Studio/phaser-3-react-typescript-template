@@ -2,8 +2,8 @@ import './index.css'
 
 import Phaser from 'phaser'
 
+import { MainMenuScene } from './scenes/mainMenuScene'
 import { GameScene } from './scenes/gameScene'
-import { PauseScene } from './scenes/pauseScene'
 import { HUDScene } from './scenes/hudScene'
 import { GameOverScene } from './scenes/gameOverScene'
 
@@ -19,7 +19,7 @@ var config = {
     audio: {
         disableWebAudio: true
     },
-    scene: [GameScene, PauseScene, HUDScene, GameOverScene ]
+    scene: [GameScene, HUDScene, MainMenuScene, GameOverScene ]
 };
 
 var game = new Phaser.Game(config);

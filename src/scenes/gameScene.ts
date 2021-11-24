@@ -14,8 +14,8 @@ import { Star } from '../gameObjects/star/star'
 import { Asteroid } from '../gameObjects/asteroid/asteroid';
 
 const sceneConfig: Phaser.Types.Scenes.SettingsConfig = {
-    active: false,
-    visible: false,
+    active: true,
+    visible: true,
     key: 'GameScene',
     physics: {
         arcade: {
@@ -102,19 +102,18 @@ export class GameScene extends Phaser.Scene {
         this.music = this.sound.add('music');
         this.music.loop = true;
 
-        //this.music.play();
-
         this.input.keyboard.on('keydown-ESC', () => {
-            this.pause();
+            this.scene.pause('GameScene');
+            this.scene.launch('MainMenuScene', { is_paused: true });
         }, this);
 
-        this.input.keyboard.on('keydown-SPACE', () => {
-            this.pause();
-        }, this);
+        this.events.on('pause', () => {
+            this.music.pause();
+            console.log('Game paused');
+        })
 
         this.events.on('resume', () => {
             this.music.resume();
-            this.scene.stop('PauseScene');
             console.log('Game resumed');
         })
 
@@ -126,6 +125,9 @@ export class GameScene extends Phaser.Scene {
         this.speed = 100;
         this.speed_timer = 0;
         this.spawn_timer = 0;
+
+        this.music.pause();
+        this.scene.pause('GameScene');
     }
 
     update(time, delta): void {
@@ -178,12 +180,6 @@ export class GameScene extends Phaser.Scene {
                 child.destroy();
             }
         });
-    }
-
-    pause() {
-        this.music.pause();
-        this.scene.pause('GameScene');
-        this.scene.launch('PauseScene');
     }
 
     collectStar(star): void {

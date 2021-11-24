@@ -1,9 +1,9 @@
 import * as Phaser from 'phaser';
 
 const sceneConfig: Phaser.Types.Scenes.SettingsConfig = {
-    active: false,
-    visible: false,
-    key: 'MainMenuScene',
+    active: true,
+    visible: true,
+    key: 'MainMenuScene'
 };
 
 export class MainMenuScene extends Phaser.Scene {
@@ -14,25 +14,28 @@ export class MainMenuScene extends Phaser.Scene {
         super(sceneConfig);
     }
 
-    create(): void {
+    create(data: { is_paused: any; }): void {
 
         const screenCenterX = this.cameras.main.worldView.x + this.cameras.main.width / 2;
         const screenCenterY = this.cameras.main.worldView.y + this.cameras.main.height / 2;
 
-        this.startButton = this.add.text(screenCenterX, screenCenterY, 'START', { font: '28px Arial' }).setOrigin(0.5);
+        this.add.text(screenCenterX, screenCenterY - 25, 'Main Menu', { font: '28px Arial' }).setOrigin(0.5);
+
+        this.startButton = this.add.text(screenCenterX, screenCenterY + 25, data.is_paused ? "RESUME" : "START", { font: '28px Arial' }).setOrigin(0.5);
         this.startButton.setInteractive();
+
         this.startButton.once('pointerup', () => {
-            this.scene.get('GameScene').scene.restart();
-            this.scene.setVisible(false);
+            this.resumeGame();
         });
 
         this.input.keyboard.once('keydown-ENTER', () => {
-            this.scene.get('GameScene').scene.restart();
-            this.scene.setVisible(false);
+            this.resumeGame();
         }, this);
+    }
 
-        this.events.on('pause', () => {
-            console.log('maineMenuScene, Game paused');
-        })
+    resumeGame() {
+        this.scene.resume('GameScene');
+        this.scene.setVisible(false);
+        this.scene.pause('MainMenuScene');
     }
 }
