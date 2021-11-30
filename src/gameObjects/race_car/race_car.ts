@@ -1,4 +1,5 @@
 import * as Phaser from 'phaser';
+import { Player } from './../player/player';
 
 const shape: Phaser.Types.Math.Vector2Like[] = [
     { x: 25, y: 0 }, // spitze
@@ -19,84 +20,126 @@ const shape: Phaser.Types.Math.Vector2Like[] = [
 
 export class RaceCar extends Phaser.Physics.Matter.Sprite {
 
-    private player: integer;
+    private player: Player;
+    private type_of_belonging: string;
 
-    private keyW: Phaser.Input.Keyboard.Key;
-    private keyA: Phaser.Input.Keyboard.Key;
-    private keyS: Phaser.Input.Keyboard.Key;
-    private keyD: Phaser.Input.Keyboard.Key;
+    constructor(player: Player, scene: Phaser.Scene, x: number, y: number, frame: number, type_of_belonging: string) {
 
-    private cursors: Phaser.Types.Input.Keyboard.CursorKeys;
-
-    constructor(scene: Phaser.Scene, x: number, y: number, player: number) {
-
-        super(scene.matter.world, x, y, 'race_car', player - 1, { label: 'race_car', isSensor: false, vertices: shape });
+        super(scene.matter.world, x, y, 'race_car', frame, { label: 'race_car', isSensor: false, vertices: shape });
 
         this.player = player;
+        this.type_of_belonging = type_of_belonging;
 
         scene.add.existing(this);
-
-        // KEYS
-        this.keyW = this.scene.input.keyboard.addKey('W');
-        this.keyA = this.scene.input.keyboard.addKey('A');
-        this.keyS = this.scene.input.keyboard.addKey('S');
-        this.keyD = this.scene.input.keyboard.addKey('D');
-
-        this.cursors = this.scene.input.keyboard.createCursorKeys();
     }
-
-    update(): void {
+/*
+    update(time, delta, gameSpeed): void {
 
         this.setVelocity(0, 0);
 
-        // Player 1
-        if (this.player == 1) {
+        //this.y += delta * (this.speed / 100);
 
-            if (this.keyW?.isDown) {
-                if (this.y > this.height / 2) { // rocket cannot fly lower than the bottom of the screen
+        this.speed_timer += delta * 30;
+
+        if (this.keyW?.isDown) {
+            
+            if (this.player.id == 1 && this.type_of_belonging === "own") {
+                if (this.player.speed_timer > 1000 && this.player.speed > 0) {
+                    this.player.speed++;
+                    this.player.speed_timer -= 1000;
+                }
+            
+                /* if (this.type_of_belonging === "own") {
                     this.setVelocityY(-1);
-                }
-            }
+                } */
+/*             }
 
-            if (this.keyA?.isDown) {
-                if (this.x > this.width / 2) { // rocket cannot leave screen on the left
-                    this.setVelocityX(-1);
-                }
+            if (this.player.id == 2 && this.type_of_belonging === "own") {
+                this.setVelocityY(1);
             }
+        } */
 
-            if (this.keyS?.isDown) {
-                if (this.y < this.scene.cameras.main.height - this.height / 2) { // rocket cannot fly higher than the top of the screen
+/*         if (this.keyS?.isDown) {
+
+            if (this.player.id == 1) {
+                if (this.speed_timer > 1000 && this.speed > 0) {
+                    this.speed--;
+                    this.speed_timer -= 1000;
+                }
+
+                if (this.type_of_belonging === "own") {
                     this.setVelocityY(1);
+                }
+            }
+
+            if (this.player.id == 2 && this.type_of_belonging === "own") {
+                this.setVelocityY(-1);
+            }
+        } */
+
+        // Player 1
+/*         if (this.player.id == 1) { */
+
+            
+
+/*             if (this.keyW?.isUp) {
+                /* if (this.y > this.height / 2) { */
+                /* if (this.speed_timer > 1000 && this.speed > 0) {
+                    this.speed = gameSpeed - 1;
+                    this.speed_timer -= 1000;
+                } */
+                //this.setVelocityY(-1);
+                /* } */
+            /*} */
+
+            
+            
+/*             if (this.keyA?.isDown) {
+                if (this.x > this.width / 2) {
+                    this.setVelocityX(-1);
                 }
             }
 
             if (this.keyD?.isDown) {
-                if (this.x < this.scene.cameras.main.width - this.width / 2) {  // rocket cannot leave screen on the right
+                if (this.x < this.scene.cameras.main.width - this.width / 2) {
                     this.setVelocityX(1);
                 }
             }
-        }
+        } */
         
 
-        // Player 2
-        if (this.player == 2) {
+/*         // Player 2
+        if (this.player.id == 2) {
 
             if (this.cursors.up.isDown) {
 
-                if (this.y > this.height / 2) { // rocket cannot fly lower than the bottom of the screen
-                    this.setVelocityY(-1);
-                }
+                //if (this.y > this.height / 2) { // rocket cannot fly lower than the bottom of the screen
+                    if (this.speed_timer > 1000 && this.speed < this.max_speed) {
+                        this.speed = gameSpeed + 1;
+                        this.speed_timer -= 1000;
+                    }
+                //}
             }
 
-            if (this.cursors.left.isDown) {
+            if (this.cursors.up.isUp) {
+
+                //if (this.y > this.height / 2) { // rocket cannot fly lower than the bottom of the screen
+                if (this.speed_timer > 1000 && this.speed > 0) {
+                    this.speed = gameSpeed - 1;
+                    this.speed_timer -= 1000;
+                }
+                //}
+            } */
+
+            /* if (this.cursors.down.isDown) {
+    if (this.y < this.scene.cameras.main.height - this.height / 2) { // rocket cannot fly higher than the top of the screen
+        this.setVelocityY(1);
+    }
+} */
+
+/*             if (this.cursors.left.isDown) {
                 if (this.x > this.width / 2) { // rocket cannot leave screen on the left
                     this.setVelocityX(-1);
-                }
-            }
-
-            if (this.cursors.down.isDown) {
-                if (this.y < this.scene.cameras.main.height - this.height / 2) { // rocket cannot fly higher than the top of the screen
-                    this.setVelocityY(1);
                 }
             }
 
@@ -106,5 +149,5 @@ export class RaceCar extends Phaser.Physics.Matter.Sprite {
                 }
             }
         }
-    }
+    } */
 }

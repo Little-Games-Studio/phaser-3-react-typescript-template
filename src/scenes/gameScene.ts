@@ -6,11 +6,9 @@ import * as asteroid_png from './../assets/images/asteroid.png'
 import * as racing_mp3 from './../assets/audio/racing.mp3'
 
 import * as race_car_svg from './../gameObjects/race_car/race_car.svg'
-import { RaceCar } from '../gameObjects/race_car/race_car'
 
 import * as star_png from './../assets/images/star.png'
-import { Star } from '../gameObjects/star/star'
-import { Asteroid } from '../gameObjects/asteroid/asteroid';
+import { Player } from '../gameObjects/player/player';
 
 const sceneConfig: Phaser.Types.Scenes.SettingsConfig = {
     active: true,
@@ -29,23 +27,18 @@ const sceneConfig: Phaser.Types.Scenes.SettingsConfig = {
 
 export class GameScene extends Phaser.Scene {
 
-    public speed: integer = 100;
+    public speed: integer = 0;
     public score: integer = 0;
     public distance_to_goal: integer = 100;
     public collected_stars: integer = 0;
 
-    private road: Phaser.GameObjects.TileSprite;
+    private road_left: Phaser.GameObjects.TileSprite;
+    private road_right: Phaser.GameObjects.TileSprite;
 
-    private player_1: RaceCar;
-    private player_2: RaceCar;
+    public player_1: Player;
+    public player_2: Player;
 
     private music: any;
-
-    private speed_timer: integer;
-    private spawn_timer: integer;
-
-    private stars: Array<any>;
-    private asteroids: Array<any>;
 
     constructor() {
         super(sceneConfig);
@@ -53,8 +46,6 @@ export class GameScene extends Phaser.Scene {
 
     preload(): void {
         this.load.image('road', road);
-        this.load.image('star', star_png);
-        this.load.image('asteroid', asteroid_png);
 
         this.load.spritesheet('race_car', race_car_svg, { frameWidth: 60, frameHeight: 100 });
         
@@ -63,38 +54,16 @@ export class GameScene extends Phaser.Scene {
 
     create(): void {
 
-        this.road = this.add.tileSprite(512, 384, 1024, 768, 'road');
-        //this.clouds_big = this.add.tileSprite(300, 400, 600, 1600, 'clouds_big');
+        this.road_left = this.add.tileSprite(0, 0, 780, 768, 'road').setOrigin(0);
+        this.road_right = this.add.tileSprite(780, 0, 780, 768, 'road').setOrigin(0)
+        this.road_right.flipX = true;
 
-        this.matter.world.on('collisionstart', event => {
-            for (var i = 0; i < event.pairs.length; i++) {
+        this.player_1 = new Player(this, 1);
+        this.player_2 = new Player(this, 2);
 
-                var bodyA = this.getRootBody(event.pairs[i].bodyA);
-                var bodyB = this.getRootBody(event.pairs[i].bodyB);
-
-                if ((bodyA.label === 'rocket' && bodyB.label === 'star')) {
-                    this.collectStar(bodyB.gameObject);
-                }
-
-                if ((bodyB.label === 'rocket' && bodyA.label === 'star')) {
-                    this.collectStar(bodyA.gameObject);
-                }
-
-                if ((bodyA.label === 'rocket' && bodyB.label === 'asteroid')) {
-                    this.hitAsteroid();
-                }
-
-                if ((bodyB.label === 'rocket' && bodyA.label === 'asteroid')) {
-                    this.hitAsteroid();
-                }
-            }
-        });
-
-        this.player_1 = new RaceCar(this, this.cameras.main.centerX - 100, this.cameras.main.height - 100, 1);
-        this.player_2 = new RaceCar(this, this.cameras.main.centerX + 100, this.cameras.main.height - 100, 2);
-        
         this.music = this.sound.add('music');
         this.music.loop = true;
+
 
         this.input.keyboard.on('keydown-ESC', () => {
             this.scene.pause('GameScene');
@@ -111,14 +80,7 @@ export class GameScene extends Phaser.Scene {
             console.log('Game resumed');
         })
 
-        this.stars = [];
-        this.asteroids = [];
-
         this.score = 0;
-        this.collected_stars = 0;
-        this.speed = 100;
-        this.speed_timer = 0;
-        this.spawn_timer = 0;
 
         this.music.pause();
         this.scene.pause('GameScene');
@@ -126,72 +88,11 @@ export class GameScene extends Phaser.Scene {
 
     update(time, delta): void {
 
-        /* this.speed_timer += delta; */
-
-        //if (this.speed_timer > 1000 /*ms*/) {
-        //    this.score += 1;
-        //    this.speed += 1;
-        //    this.speed_timer -= 1000;
-        //}
-
-        this.road.tilePositionY -= 0.15 * delta * (this.speed / 100);
+        /* this.road_left.tilePositionY -= delta * (this.speed / 100);
+        this.road_right.tilePositionY -= delta * (this.speed / 100); */
 
         this.player_1.update();
         this.player_2.update();
-
-        this.spawn_timer += delta * (this.speed / 100);
-
-        if (this.spawn_timer > 1000) {
-
-            var star = new Star(this);
-            this.stars.push(star);
-
-            var asteroid = new Asteroid(this);
-            this.asteroids.push(asteroid);
-
-            this.spawn_timer -= 1000;
-        }
-
-        this.stars.forEach((child: any) => {
-            child.y += 0.3 * delta * (this.speed / 100);
-        });
-
-        this.stars.forEach((star: Phaser.GameObjects.Sprite) => {
-            if (star.y > 900) {
-                this.destroyStar(star);
-            }
-        });
- 
-        this.asteroids.forEach((child: any) => {
-            child.y += 0.25 * delta * (this.speed / 100);
-        });
-
-        this.asteroids.forEach((child: Phaser.GameObjects.Sprite) => {
-            if (child.y > 900) {
-                this.asteroids.splice(this.asteroids.indexOf(child), 1);
-                this.matter.world.remove(child);
-                child.destroy();
-            }
-        });
-    }
-
-    collectStar(star): void {
-        this.collected_stars += 1;
-        this.score += 10;
-        this.destroyStar(star);
-    }
-
-    hitAsteroid(): void {
-        this.events.emit('hitAsteroid');
-        this.music.pause();
-        this.scene.pause('GameScene');
-        this.scene.launch('GameOverScene');
-    }
-
-    destroyStar(star) {
-        this.stars.splice(this.stars.indexOf(star), 1);
-        this.matter.world.remove(star);
-        star.destroy();
     }
 
     getRootBody(body) {

@@ -9,7 +9,7 @@ import { GameOverScene } from './scenes/gameOverScene'
 
 var config = {
     type: Phaser.AUTO,
-    width: 1024,
+    width: 1560,
     height: 768,
     scale: {
         mode: Phaser.Scale.FIT,
