@@ -1,14 +1,11 @@
 import * as Phaser from 'phaser';
 
 import * as road from './../assets/images/background/road.png'
-
-import * as asteroid_png from './../assets/images/asteroid.png'
 import * as racing_mp3 from './../assets/audio/racing.mp3'
-
 import * as race_car_svg from './../gameObjects/race_car/race_car.svg'
 
-import * as star_png from './../assets/images/star.png'
 import { Player } from '../gameObjects/player/player';
+import { RaceCar } from '../gameObjects/race_car/race_car';
 
 const sceneConfig: Phaser.Types.Scenes.SettingsConfig = {
     active: true,
@@ -32,8 +29,8 @@ export class GameScene extends Phaser.Scene {
     public distance_to_goal: integer = 100;
     public collected_stars: integer = 0;
 
-    private road_left: Phaser.GameObjects.TileSprite;
-    private road_right: Phaser.GameObjects.TileSprite;
+    public road_left: Phaser.GameObjects.TileSprite;
+    public road_right: Phaser.GameObjects.TileSprite;
 
     public player_1: Player;
     public player_2: Player;
@@ -60,6 +57,14 @@ export class GameScene extends Phaser.Scene {
 
         this.player_1 = new Player(this, 1);
         this.player_2 = new Player(this, 2);
+
+        this.player_1.own_car = new RaceCar(this.player_1, this, this.cameras.main.centerX - 500, this.cameras.main.height - 250, 0, "own");
+
+        this.player_1.opponents_car = new RaceCar(this.player_2, this, this.cameras.main.centerX - 230, this.cameras.main.height - 250, 1, "opponents");
+
+        this.player_2.own_car = new RaceCar(this.player_2, this, this.cameras.main.centerX + 500, this.cameras.main.height - 250, 1, "own");
+
+        this.player_2.opponents_car = new RaceCar(this.player_1, this, this.cameras.main.centerX + 230, this.cameras.main.height - 250, 0, "opponents");
 
         this.music = this.sound.add('music');
         this.music.loop = true;
@@ -88,11 +93,11 @@ export class GameScene extends Phaser.Scene {
 
     update(time, delta): void {
 
-        /* this.road_left.tilePositionY -= delta * (this.speed / 100);
-        this.road_right.tilePositionY -= delta * (this.speed / 100); */
+        this.player_1.update(time, delta);
+        this.player_2.update(time, delta);
 
-        this.player_1.update();
-        this.player_2.update();
+        this.road_left.tilePositionY -= this.player_1.speed / 10;
+        this.road_right.tilePositionY -= this.player_2.speed / 10;
     }
 
     getRootBody(body) {

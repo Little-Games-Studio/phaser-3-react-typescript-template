@@ -44,7 +44,7 @@ export class HUDScene extends Phaser.Scene {
     update(): void {
         this.score_text_1.setText('Score: ' + this.myGame.score);
         this.score_text_2.setText('Score: ' + this.myGame.score);
-        this.speed_text_1.setText('Speed: ' + (this.myGame.player_1 ? this.myGame.player_1.speed : 0) + ' km/h');
-        this.speed_text_2.setText('Speed: ' + (this.myGame.player_2 ? this.myGame.player_2.speed : 0) + ' km/h');
+        this.speed_text_1.setText('Speed: ' + (this.myGame.player_1 ? Math.floor(this.myGame.player_1.speed) : 0) + ' km/h');
+        this.speed_text_2.setText('Speed: ' + (this.myGame.player_2 ? Math.floor(this.myGame.player_2.speed) : 0) + ' km/h');
     }
 }
