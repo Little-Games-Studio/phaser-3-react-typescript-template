@@ -9,13 +9,20 @@ export class Player extends Phaser.GameObjects.GameObject {
     public opponents_car: RaceCar;
 
     public speed: integer = 0;
+    public relative_speed: integer = 0;
     public speed_timer: integer = 0;
+    public min_speed: integer = -40;
     public max_speed: integer = 180;
-    public acceleration_rate: number = 0.5;
+    public acceleration_rate: number = 0.2;
+
+    public is_moving_left: boolean = false;
+    public is_moving_right: boolean = false;
 
     private keyW: Phaser.Input.Keyboard.Key;
+    private keyA: Phaser.Input.Keyboard.Key;
     private keyS: Phaser.Input.Keyboard.Key;
-
+    private keyD: Phaser.Input.Keyboard.Key;
+    
     private cursors: Phaser.Types.Input.Keyboard.CursorKeys;
 
     constructor(scene: Phaser.Scene, id: integer) {
@@ -26,16 +33,15 @@ export class Player extends Phaser.GameObjects.GameObject {
 
         // KEYS
         this.keyW = this.scene.input.keyboard.addKey('W');
+        this.keyA = this.scene.input.keyboard.addKey('A');
         this.keyS = this.scene.input.keyboard.addKey('S');
+        this.keyD = this.scene.input.keyboard.addKey('D');
 
         this.cursors = this.scene.input.keyboard.createCursorKeys();
     }
 
 
     update(time, delta): void {
-
-        this.own_car.update(time, delta);
-        this.opponents_car.update(time, delta);
 
         // Player 1
         if (this.id == 1) {
@@ -48,8 +54,12 @@ export class Player extends Phaser.GameObjects.GameObject {
                 this.speed -= 1 * this.acceleration_rate;
             }
 
-            if (this.keyS?.isDown && this.speed > 0) {
-                this.speed -= 1 * this.acceleration_rate + 1;
+            if (this.keyS?.isDown && this.speed > this.min_speed) {
+                this.speed -= 1 * this.acceleration_rate;
+            }
+
+            if (this.keyS?.isUp && this.speed < 0) {
+                this.speed += 1 * this.acceleration_rate;
             }
         }
 
@@ -64,9 +74,16 @@ export class Player extends Phaser.GameObjects.GameObject {
                 this.speed -= 1 * this.acceleration_rate;
             }
 
-            if (this.cursors.down.isDown && this.speed > 0) {
-                this.speed -= 1 * this.acceleration_rate + 1;
+            if (this.cursors.down.isDown && this.speed > this.min_speed) {
+                this.speed -= 1 * this.acceleration_rate;
+            }
+
+            if (this.cursors.down.isUp && this.speed < 0) {
+                this.speed += 1 * this.acceleration_rate;
             }
         }
+
+        this.own_car.update(time, delta);
+        this.opponents_car.update(time, delta);
     }
 }

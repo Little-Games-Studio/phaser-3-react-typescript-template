@@ -15,10 +15,13 @@ export class HUDScene extends Phaser.Scene {
     private label_1: any;
     private score_text_1: any;
     private speed_text_1: any;
+    private speed_div_1: any;
+    private angle_1: any;
 
     private label_2: any;
     private score_text_2: any;
     private speed_text_2: any;
+    private speed_div_2: any;
 
     constructor() {
         super(sceneConfig);
@@ -33,18 +36,27 @@ export class HUDScene extends Phaser.Scene {
         this.label_1 = this.add.text(10, 10, 'Player 1', { font: '28px Arial' });
         this.score_text_1 = this.add.text(10, 50, 'Score: 0', { font: '18px Arial' });
         this.speed_text_1 = this.add.text(10, 80, 'Speed: 0 km/h', { font: '18px Arial' });
+        this.speed_div_1 = this.add.text(10, 110, '+/-: 0 km/h', { font: '18px Arial' });
+        this.angle_1 = this.add.text(10, 140, '0', { font: '18px Arial' });
 
         // Player 2
         var x = 150;
         this.label_2 = this.add.text(this.cameras.main.width - x, 10, 'Player 2', { font: '28px Arial' });
         this.score_text_2 = this.add.text(this.cameras.main.width - x, 50, 'Score: 0', { font: '18px Arial' });
         this.speed_text_2 = this.add.text(this.cameras.main.width - x, 80, 'Speed: 0 km/h', { font: '18px Arial' });
+        this.speed_div_2 = this.add.text(this.cameras.main.width - x, 110, '+/-: 0 km/h', { font: '18px Arial' });
     }
 
     update(): void {
         this.score_text_1.setText('Score: ' + this.myGame.score);
         this.score_text_2.setText('Score: ' + this.myGame.score);
+
         this.speed_text_1.setText('Speed: ' + (this.myGame.player_1 ? Math.floor(this.myGame.player_1.speed) : 0) + ' km/h');
         this.speed_text_2.setText('Speed: ' + (this.myGame.player_2 ? Math.floor(this.myGame.player_2.speed) : 0) + ' km/h');
+
+        this.speed_div_1.setText('+/-: ' + (this.myGame.player_1 ? Math.floor(this.myGame.player_1.relative_speed) : 0) + ' km/h');
+        this.speed_div_2.setText('+/-: ' + (this.myGame.player_2 ? Math.floor(this.myGame.player_2.relative_speed) : 0) + ' km/h');
+
+        this.angle_1.setText( (this.myGame.player_1 ? Math.floor(this.myGame.player_1.own_car.angle) : 0) );
     }
 }
